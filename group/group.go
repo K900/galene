@@ -353,6 +353,19 @@ func codecsFromName(name string) ([]webrtc.RTPCodecParameters, error) {
 			RTPCodecCapability: c,
 			PayloadType:        ptype,
 		})
+		if strings.HasPrefix(strings.ToLower(c.MimeType), "video/") {
+			rtxcodec := webrtc.RTPCodecCapability{
+				"video/rtx",
+				c.ClockRate,
+				c.Channels,
+				fmt.Sprintf("apt=%d", ptype),
+				nil,
+			}
+			parms = append(parms, webrtc.RTPCodecParameters{
+				RTPCodecCapability: rtxcodec,
+				PayloadType:        ptype + 1,
+			})
+		}
 	}
 	return parms, nil
 }
