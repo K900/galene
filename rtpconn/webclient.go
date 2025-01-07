@@ -406,26 +406,6 @@ func addDownTrackUnlocked(conn *rtpDownConnection, remoteTrack *rtpUpTrack) erro
 		return err
 	}
 
-	codec := local.Codec()
-	ptype, err := group.CodecPayloadType(local.Codec())
-	if err != nil {
-		log.Printf("Couldn't determine ptype for codec %v: %v",
-			codec.MimeType, err)
-	} else {
-		err := transceiver.SetCodecPreferences(
-			[]webrtc.RTPCodecParameters{
-				{
-					RTPCodecCapability: codec,
-					PayloadType:        ptype,
-				},
-			},
-		)
-		if err != nil {
-			log.Printf("Couldn't set ptype for codec %v: %v",
-				codec.MimeType, err)
-		}
-	}
-
 	parms := transceiver.Sender().GetParameters()
 	if len(parms.Encodings) != 1 {
 		return errors.New("got multiple encodings")
